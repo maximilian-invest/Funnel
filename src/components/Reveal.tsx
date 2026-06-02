@@ -52,10 +52,11 @@ export function Reveal({
   return (
     <M
       className={className}
-      initial={reduce ? false : { opacity: 0, y }}
+      initial={{ opacity: 0, y }}
       whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+      animate={reduce ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, amount: 0.18, margin: "0px 0px -6% 0px" }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
+      transition={reduce ? { duration: 0 } : { duration: 0.7, ease: EASE, delay }}
       {...rest}
     >
       {children}

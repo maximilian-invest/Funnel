@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Calendar } from "lucide-react";
 import { WEBINAR, ROUTES } from "@/lib/constants";
+import { asset } from "@/lib/asset";
 
-const MARK_WHITE = "/assets/logo-mark-white.svg";
-const WORD_WHITE = "/assets/logo-wordmark-white.svg";
-const MARK_DARK = "/assets/logo-mark.svg";
-const WORD_DARK = "/assets/logo-wordmark.svg";
+const MARK_WHITE = asset("/assets/logo-mark-white.svg");
+const WORD_WHITE = asset("/assets/logo-wordmark-white.svg");
+const MARK_DARK = asset("/assets/logo-mark.svg");
+const WORD_DARK = asset("/assets/logo-wordmark.svg");
 
 type Variant = "landing" | "solid" | "room";
 

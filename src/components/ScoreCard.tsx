@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { CheckCircle2, Link as LinkIcon } from "lucide-react";
+import { asset } from "@/lib/asset";
 
-const MARK_WHITE = "/assets/logo-mark-white.svg";
+const MARK_WHITE = asset("/assets/logo-mark-white.svg");
 
 type Verdict = "good" | "mid" | "weak";
 type Prop = {
@@ -277,10 +278,11 @@ export function ScoreCard() {
       className="score-card"
       data-demo-loop
       aria-label="Allround Immo Score — Live-Analyse"
-      initial={reduce ? false : { opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+      animate={reduce ? { opacity: 1, y: 0 } : undefined}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
+      transition={reduce ? { duration: 0 } : { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
     >
       <div className="score-head">
         <span className="ttl">

@@ -8,9 +8,9 @@ export function SuccessRing() {
   return (
     <motion.div
       className="success-ring"
-      initial={reduce ? false : { scale: 0.6, opacity: 0 }}
-      animate={reduce ? undefined : { scale: 1, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.05 }}
+      initial={{ scale: reduce ? 1 : 0.6, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 260, damping: 18, delay: 0.05 }}
     >
       <svg
         viewBox="0 0 24 24"

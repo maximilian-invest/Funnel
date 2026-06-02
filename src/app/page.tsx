@@ -9,8 +9,9 @@ import { SignupForm } from "@/components/SignupForm";
 import { Faq } from "@/components/Faq";
 import { ImageSlot } from "@/components/ImageSlot";
 import { WEBINAR } from "@/lib/constants";
+import { asset } from "@/lib/asset";
 
-const MARK_WHITE = "/assets/logo-mark-white.svg";
+const MARK_WHITE = asset("/assets/logo-mark-white.svg");
 
 export default function LandingPage() {
   return (

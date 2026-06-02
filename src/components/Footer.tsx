@@ -1,5 +1,7 @@
-const MARK_WHITE = "/assets/logo-mark-white.svg";
-const WORD_WHITE = "/assets/logo-wordmark-white.svg";
+import { asset } from "@/lib/asset";
+
+const MARK_WHITE = asset("/assets/logo-mark-white.svg");
+const WORD_WHITE = asset("/assets/logo-wordmark-white.svg");
 
 export function Footer({ variant = "full" }: { variant?: "full" | "compact" }) {
   if (variant === "compact") {
