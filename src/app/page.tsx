@@ -8,6 +8,7 @@ import { Countdown } from "@/components/Countdown";
 import { SignupForm } from "@/components/SignupForm";
 import { Faq } from "@/components/Faq";
 import { ImageSlot } from "@/components/ImageSlot";
+import { SeatsLeft } from "@/components/SeatsLeft";
 import { WEBINAR } from "@/lib/constants";
 import { asset } from "@/lib/asset";
 
@@ -51,7 +52,11 @@ export default function LandingPage() {
                 </a>
               </Reveal>
 
-              <Reveal as="div" className="hero-meta" delay={0.24}>
+              <Reveal as="div" className="hero-seats" delay={0.24}>
+                <SeatsLeft variant="pill" />
+              </Reveal>
+
+              <Reveal as="div" className="hero-meta" delay={0.32}>
                 <Stars label="4,9 von 5" />
                 <span className="trust-txt">
                   <b>Vertraut von Investoren</b> im gesamten DACH-Raum
@@ -297,10 +302,7 @@ export default function LandingPage() {
             </div>
             <p className="sub">Trag dich ein — die Zugangsdaten kommen sofort per E-Mail.</p>
             <SignupForm />
-            <div className="seats">
-              <span className="badge-dot" /> Begrenzte Teilnehmerzahl — Plätze werden in der
-              Reihenfolge der Anmeldung vergeben.
-            </div>
+            <SeatsLeft variant="meter" />
           </Reveal>
         </div>
       </section>
