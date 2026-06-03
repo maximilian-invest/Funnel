@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendRegistrationEmails, verifySmtp, verifyResend } from "@/lib/email";
+import { supabaseEnabled, addRegistration, listRegistrations } from "@/lib/registrations";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,13 +17,15 @@ export async function GET(req: NextRequest) {
     smtpConfigured: Boolean(
       process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS,
     ),
+    supabaseConfigured: supabaseEnabled(),
     mailFrom: process.env.MAIL_FROM ?? null,
     mailTo: process.env.MAIL_TO ?? null,
   };
   // ?selftest=1 → check the active provider (no mail sent) and report any error
   if (req.nextUrl.searchParams.get("selftest")) {
     const verify = process.env.RESEND_API_KEY ? await verifyResend() : await verifySmtp();
-    return NextResponse.json({ ...base, verify });
+    const registrations = supabaseEnabled() ? (await listRegistrations()).length : null;
+    return NextResponse.json({ ...base, verify, registrations });
   }
   return NextResponse.json(base);
 }
@@ -57,7 +60,20 @@ export async function POST(req: NextRequest) {
     }
 
     const siteUrl = process.env.MAIL_SITE_URL || "https://live.allround.immo";
-    await sendRegistrationEmails(name, email, siteUrl);
+
+    // persist + build the cumulative list (newest first) for the team email
+    let registrants: { name: string; email: string; created_at?: string }[] = [{ name, email }];
+    if (supabaseEnabled()) {
+      try {
+        await addRegistration(name, email);
+        const all = await listRegistrations();
+        if (all.length) registrants = all;
+      } catch (e) {
+        console.error("[register] supabase error", e);
+      }
+    }
+
+    await sendRegistrationEmails(name, email, siteUrl, registrants);
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[register] error", err);

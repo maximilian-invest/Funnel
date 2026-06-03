@@ -93,23 +93,55 @@ Zum Webinar-Raum: ${link}
   return { subject: "Du bist dabei — dein Webinar-Zugang ✅", html, text };
 }
 
-/** Plain notification for the team. */
-export function teamEmail(name: string, email: string) {
-  const when = new Date().toLocaleString("de-AT");
+type Registrant = { name: string; email: string; created_at?: string };
+
+/** Team notification with the full registrant list, newest first. */
+export function teamEmail(registrants: Registrant[]) {
+  const list = registrants.length ? registrants : [];
+  const newest = list[0];
+  const total = list.length;
+  const fmtWhen = (s?: string) => (s ? new Date(s).toLocaleString("de-AT") : "");
+
+  const rows = list
+    .map((r, i) => {
+      const hl = i === 0 ? "background:#fff5f5;" : "";
+      const neu =
+        i === 0
+          ? ' <span style="color:#ef4444;font-size:10px;font-weight:700;">NEU</span>'
+          : "";
+      return `<tr style="border-top:1px solid #eee;${hl}">
+        <td style="padding:9px 12px;color:#9ca3af;">${i + 1}</td>
+        <td style="padding:9px 12px;color:#111;font-weight:${i === 0 ? 700 : 600};">${esc(r.name)}${neu}</td>
+        <td style="padding:9px 12px;"><a href="mailto:${esc(r.email)}" style="color:#111;text-decoration:none;">${esc(r.email)}</a></td>
+        <td style="padding:9px 12px;color:#6b7280;white-space:nowrap;">${esc(fmtWhen(r.created_at))}</td>
+      </tr>`;
+    })
+    .join("");
+
   const html = `<!doctype html><html><body style="margin:0;background:#f5f5f5;padding:24px;font-family:Arial,Helvetica,sans-serif;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;">
- <tr><td style="padding:24px 28px;">
+<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+ <tr><td style="padding:22px 26px 0;">
    <div style="font-size:13px;font-weight:700;letter-spacing:1px;color:#ef4444;text-transform:uppercase;">Neue Webinar-Anmeldung</div>
-   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;font-size:15px;color:#111827;">
-     <tr><td style="padding:8px 0;color:#6b7280;width:90px;">Name</td><td style="padding:8px 0;font-weight:600;">${esc(name)}</td></tr>
-     <tr><td style="padding:8px 0;color:#6b7280;">E-Mail</td><td style="padding:8px 0;font-weight:600;"><a href="mailto:${esc(email)}" style="color:#111827;">${esc(email)}</a></td></tr>
-     <tr><td style="padding:8px 0;color:#6b7280;">Zeitpunkt</td><td style="padding:8px 0;">${esc(when)}</td></tr>
+   <div style="font-size:20px;font-weight:800;color:#111;margin-top:8px;">${esc(newest?.name ?? "")}</div>
+   <div style="font-size:14px;color:#374151;margin-top:2px;">${esc(newest?.email ?? "")}</div>
+   <div style="font-size:13px;color:#6b7280;margin-top:14px;">Gesamt: <b>${total}</b> Anmeldung${total === 1 ? "" : "en"} · neueste oben</div>
+ </td></tr>
+ <tr><td style="padding:14px 26px 26px;">
+   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #eee;border-radius:8px;border-collapse:collapse;font-size:14px;">
+     <tr style="background:#fafafa;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:.04em;">
+       <td style="padding:9px 12px;">#</td><td style="padding:9px 12px;">Name</td><td style="padding:9px 12px;">E-Mail</td><td style="padding:9px 12px;">Wann</td>
+     </tr>
+     ${rows}
    </table>
  </td></tr>
 </table></td></tr></table></body></html>`;
-  const text = `Neue Webinar-Anmeldung\nName: ${name}\nE-Mail: ${email}\nZeit: ${when}`;
-  return { subject: `Neue Webinar-Anmeldung: ${name}`, html, text };
+
+  const text =
+    `${total} Anmeldung${total === 1 ? "" : "en"} (neueste oben):\n\n` +
+    list.map((r, i) => `${i + 1}. ${r.name} — ${r.email}`).join("\n");
+
+  return { subject: `Neue Anmeldung: ${newest?.name ?? ""} · ${total} gesamt`, html, text };
 }
 
 async function sendViaResend(p: {
@@ -144,12 +176,13 @@ export async function sendRegistrationEmails(
   name: string,
   email: string,
   siteUrl: string,
+  registrants: Registrant[] = [{ name, email }],
 ): Promise<void> {
   const from =
     process.env.MAIL_FROM || `ALLROUND.IMMO <${process.env.SMTP_USER || "onboarding@resend.dev"}>`;
   const teamTo = process.env.MAIL_TO || process.env.SMTP_USER || email;
   const cust = customerEmail(name, siteUrl);
-  const team = teamEmail(name, email);
+  const team = teamEmail(registrants);
 
   // Preferred: Resend over HTTPS (works on Railway, where SMTP egress is blocked).
   if (process.env.RESEND_API_KEY) {
