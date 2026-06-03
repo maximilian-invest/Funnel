@@ -1,0 +1,125 @@
+import nodemailer from "nodemailer";
+import { WEBINAR } from "./constants";
+
+// Credentials come from environment variables (set them on Railway → Variables).
+// They are never hard-coded here.
+function getTransport() {
+  const host = process.env.SMTP_HOST;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  if (!host || !user || !pass) return null;
+  const port = Number(process.env.SMTP_PORT || 465);
+  const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : port === 465;
+  return nodemailer.createTransport({ host, port, secure, auth: { user, pass } });
+}
+
+function esc(s: string) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function pad(n: number) {
+  return n < 10 ? "0" + n : "" + n;
+}
+function countdown(now = Date.now()) {
+  let s = Math.max(0, Math.floor((WEBINAR.date.getTime() - now) / 1000));
+  const d = Math.floor(s / 86400);
+  s -= d * 86400;
+  const h = Math.floor(s / 3600);
+  s -= h * 3600;
+  const m = Math.floor(s / 60);
+  return { d, h, m };
+}
+
+/** Premium dark confirmation email for the registrant. */
+export function customerEmail(name: string, siteUrl: string) {
+  const safe = esc(name) || "Investor";
+  const { d, h, m } = countdown();
+  const link = `${siteUrl.replace(/\/$/, "")}/webinar`;
+  const box = (n: number, label: string) =>
+    `<td align="center" style="background:#1f1f1f;border:1px solid #2c2c2c;border-radius:10px;padding:14px 0;">
+       <div style="font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:800;color:#ffffff;line-height:1;">${pad(n)}</div>
+       <div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#a1a1aa;letter-spacing:1.5px;text-transform:uppercase;margin-top:7px;">${label}</div>
+     </td>`;
+  const gap = `<td style="width:10px;"></td>`;
+
+  const html = `<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"></head>
+<body style="margin:0;padding:0;background:#0b0b0b;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0b0b0b;padding:32px 12px;"><tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#151515;border:1px solid #2a2a2a;border-radius:16px;">
+  <tr><td style="padding:34px 36px 0;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:800;letter-spacing:.4px;color:#ffffff;">ALLROUND<span style="color:#ef4444;">.IMMO</span></td></tr>
+  <tr><td style="padding:24px 36px 0;">
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.6px;color:#ef4444;text-transform:uppercase;">Anmeldung bestätigt</div>
+    <h1 style="margin:12px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:29px;line-height:1.2;color:#ffffff;font-weight:800;">Du bist dabei, ${safe}.</h1>
+    <p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#a1a1aa;">Dein Platz für das kostenlose Live-Webinar ist reserviert. Über den Button unten kommst du direkt in den Webinar-Raum — leg dir den Termin am besten gleich in den Kalender.</p>
+  </td></tr>
+  <tr><td style="padding:22px 36px 0;">
+    <div style="font-family:Arial,Helvetica,sans-serif;background:#1f1f1f;border:1px solid #2c2c2c;border-radius:10px;padding:13px 16px;font-size:14px;color:#ffffff;font-weight:700;">📅&nbsp; Mo, 15. Juni 2026 · 19:30 Uhr · Live online</div>
+  </td></tr>
+  <tr><td style="padding:16px 36px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${box(d, "Tage")}${gap}${box(h, "Stunden")}${gap}${box(m, "Minuten")}</tr></table>
+  </td></tr>
+  <tr><td style="padding:26px 36px 0;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center" bgcolor="#ef4444" style="border-radius:10px;">
+      <a href="${link}" style="display:block;padding:16px 24px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">Zum Webinar-Raum &rarr;</a>
+    </td></tr></table>
+  </td></tr>
+  <tr><td style="padding:14px 36px 0;font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.6;color:#71717a;">Funktioniert der Button nicht? Öffne diesen Link:<br><a href="${link}" style="color:#ef4444;text-decoration:none;">${link}</a></td></tr>
+  <tr><td style="padding:28px 36px 34px;">
+    <div style="border-top:1px solid #2a2a2a;padding-top:18px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#52525b;">© 2026 ALLROUND.IMMO · Investiere wie ein Profi.</div>
+  </td></tr>
+</table></td></tr></table></body></html>`;
+
+  const text = `Du bist dabei, ${name || "Investor"}.
+
+Dein Platz für das kostenlose Live-Webinar ist reserviert.
+Mo, 15. Juni 2026 · 19:30 Uhr · Live online
+
+Zum Webinar-Raum: ${link}
+
+© ALLROUND.IMMO`;
+
+  return { subject: "Du bist dabei — dein Webinar-Zugang ✅", html, text };
+}
+
+/** Plain notification for the team. */
+export function teamEmail(name: string, email: string) {
+  const when = new Date().toLocaleString("de-AT");
+  const html = `<!doctype html><html><body style="margin:0;background:#f5f5f5;padding:24px;font-family:Arial,Helvetica,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+<table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;">
+ <tr><td style="padding:24px 28px;">
+   <div style="font-size:13px;font-weight:700;letter-spacing:1px;color:#ef4444;text-transform:uppercase;">Neue Webinar-Anmeldung</div>
+   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;font-size:15px;color:#111827;">
+     <tr><td style="padding:8px 0;color:#6b7280;width:90px;">Name</td><td style="padding:8px 0;font-weight:600;">${esc(name)}</td></tr>
+     <tr><td style="padding:8px 0;color:#6b7280;">E-Mail</td><td style="padding:8px 0;font-weight:600;"><a href="mailto:${esc(email)}" style="color:#111827;">${esc(email)}</a></td></tr>
+     <tr><td style="padding:8px 0;color:#6b7280;">Zeitpunkt</td><td style="padding:8px 0;">${esc(when)}</td></tr>
+   </table>
+ </td></tr>
+</table></td></tr></table></body></html>`;
+  const text = `Neue Webinar-Anmeldung\nName: ${name}\nE-Mail: ${email}\nZeit: ${when}`;
+  return { subject: `Neue Webinar-Anmeldung: ${name}`, html, text };
+}
+
+export async function sendRegistrationEmails(
+  name: string,
+  email: string,
+  siteUrl: string,
+): Promise<void> {
+  const t = getTransport();
+  if (!t) {
+    console.warn("[email] SMTP not configured — skipping send (set SMTP_* env vars).");
+    return;
+  }
+  const from = process.env.MAIL_FROM || `ALLROUND.IMMO <${process.env.SMTP_USER}>`;
+  const teamTo = process.env.MAIL_TO || process.env.SMTP_USER!;
+  const cust = customerEmail(name, siteUrl);
+  const team = teamEmail(name, email);
+  await Promise.all([
+    t.sendMail({ from, to: email, subject: cust.subject, html: cust.html, text: cust.text }),
+    t.sendMail({ from, to: teamTo, replyTo: email, subject: team.subject, html: team.html, text: team.text }),
+  ]);
+}
