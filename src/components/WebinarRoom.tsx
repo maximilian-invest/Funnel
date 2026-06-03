@@ -1,53 +1,14 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { ArrowRight, Maximize, Play, Send, Volume2 } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, Maximize, Play, Volume2 } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { ImageSlot } from "./ImageSlot";
+import { WebinarChat } from "./WebinarChat";
 import { WEBINAR } from "@/lib/constants";
-
-type Msg = {
-  initials: string;
-  color: string;
-  name: string;
-  host?: boolean;
-  text: string;
-};
-
-const SEED: Msg[] = [];
-
-const REACTIONS = ["👍", "🔥", "👏", "❤️"];
 
 export function WebinarRoom() {
   const [overlayHidden, setOverlayHidden] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>(SEED);
-  const [draft, setDraft] = useState("");
-  const msgsRef = useRef<HTMLDivElement>(null);
-
-  function scrollToBottom() {
-    requestAnimationFrame(() => {
-      const m = msgsRef.current;
-      if (m) m.scrollTop = m.scrollHeight;
-    });
-  }
-
-  function send() {
-    const text = draft.trim();
-    if (!text) return;
-    setMessages((prev) => [...prev, { initials: "DU", color: "#111", name: "Du", text }]);
-    setDraft("");
-    scrollToBottom();
-  }
-
-  function spawnReaction(glyph: string, x: number, y: number) {
-    const node = document.createElement("div");
-    node.className = "float-react";
-    node.textContent = glyph;
-    node.style.left = x - 13 + "px";
-    node.style.top = y - 20 + "px";
-    document.body.appendChild(node);
-    window.setTimeout(() => node.remove(), 2300);
-  }
 
   return (
     <div className="room-grid">
@@ -130,62 +91,8 @@ export function WebinarRoom() {
         </Reveal>
       </div>
 
-      {/* RIGHT: live chat */}
-      <Reveal as="aside" className="chat" delay={0.08} aria-label="Live-Chat">
-        <div className="chat-head">
-          <span className="ttl">Live-Chat</span>
-          <span className="cnt">
-            <span
-              className="badge-dot live"
-              style={{ background: "#34d399", display: "inline-block" }}
-            />{" "}
-            Live
-          </span>
-        </div>
-        <div className="chat-msgs" ref={msgsRef}>
-          {messages.length === 0 ? (
-            <div className="chat-empty">Der Live-Chat startet mit dem Webinar.</div>
-          ) : (
-            messages.map((m, i) => (
-              <div className="cmsg" key={i}>
-                <span className="av" style={{ background: m.color }}>
-                  {m.initials}
-                </span>
-                <div className="cm-body">
-                  <div className={"nm" + (m.host ? " host" : "")}>{m.name}</div>
-                  <div className="tx">{m.text}</div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-        <div className="reactions">
-          {REACTIONS.map((r) => (
-            <button
-              key={r}
-              aria-label={`Reaktion ${r}`}
-              onClick={(e) => spawnReaction(r, e.clientX, e.clientY)}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-        <div className="chat-input">
-          <input
-            type="text"
-            placeholder="Nachricht schreiben …"
-            aria-label="Nachricht"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") send();
-            }}
-          />
-          <button className="send" aria-label="Senden" onClick={send}>
-            <Send size={18} />
-          </button>
-        </div>
-      </Reveal>
+      {/* RIGHT: live chat (backend-mediated, no Supabase key in the browser) */}
+      <WebinarChat />
     </div>
   );
 }

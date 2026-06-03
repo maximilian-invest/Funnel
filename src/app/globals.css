@@ -674,3 +674,8 @@ svg.lucide { stroke-width: 1.75; }
 .room-host .host-img { width: 46px; height: 46px; border-radius: var(--radius-full); object-fit: cover; object-position: 42% 18%; flex: none; }
 /* empty live-chat state */
 .chat-empty { margin: auto; text-align: center; font-size: 13px; line-height: 1.5; color: var(--color-on-dark-soft); padding: 0 18px; }
+/* live-chat name field */
+.chat-name { padding: 12px 14px 0; }
+.chat-name input { width: 100%; height: 38px; padding: 0 13px; background: #000; border: 1px solid rgba(255,255,255,.14); border-radius: var(--radius-md); color: #fff; font-family: var(--font-body); font-size: 13.5px; outline: none; }
+.chat-name input::placeholder { color: rgba(255,255,255,.38); }
+.chat-name input:focus { border-color: rgba(255,255,255,.4); }
