@@ -124,7 +124,7 @@ export default function ConfirmationPage() {
         </div>
       </section>
 
-      <Footer variant="compact" />
+      <Footer />
     </>
   );
 }

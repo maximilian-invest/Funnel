@@ -660,3 +660,7 @@ svg.lucide { stroke-width: 1.75; }
   .seats-dot { animation: none; }
   .seats-fill { transition: none; }
 }
+
+/* footer reduced to logo only */
+.footer { padding: 52px 0; }
+.footer-min { display: flex; align-items: center; justify-content: center; }

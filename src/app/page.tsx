@@ -320,7 +320,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <Footer variant="full" />
+      <Footer />
     </>
   );
 }
