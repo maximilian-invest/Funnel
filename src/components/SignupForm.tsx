@@ -84,10 +84,6 @@ export function SignupForm() {
           </>
         )}
       </button>
-      <p className="form-fine">
-        Mit der Anmeldung stimmst du zu, Infos zum Webinar per E-Mail zu erhalten. Abmeldung
-        jederzeit. Es gilt unsere <a href="#">Datenschutzerklärung</a>.
-      </p>
     </form>
   );
 }
