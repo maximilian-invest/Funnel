@@ -1,15 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import {
-  ArrowRight,
-  Check,
-  Maximize,
-  Play,
-  Send,
-  Users,
-  Volume2,
-} from "lucide-react";
+import { ArrowRight, Maximize, Play, Send, Users, Volume2 } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { ImageSlot } from "./ImageSlot";
 import { WEBINAR } from "@/lib/constants";
@@ -158,31 +150,13 @@ export function WebinarRoom() {
           <span className="badge badge-accent" style={{ marginBottom: 14 }}>
             <span className="badge-dot" /> Nur für Webinar-Teilnehmer
           </span>
-          <div className="ttl">Bring deine Deal-Prüfung auf Profi-Niveau.</div>
-          <p>
-            Sichere dir ein persönliches Strategiegespräch und prüfe gemeinsam mit unserem Team,
-            wie ALLROUND.IMMO deine Objekt-Analyse beschleunigt — von der ersten Kennzahl bis zum
-            bankfähigen Dossier.
-          </p>
-          <ul className="offer-points">
-            <li>
-              <Check size={17} /> Live-Analyse eines deiner Objekte mit dem Investment-Score
-            </li>
-            <li>
-              <Check size={17} /> Persönliche Einrichtung &amp; 1-Klick-Import deiner Inserate
-            </li>
-            <li>
-              <Check size={17} /> Bankfähige Dossiers für Finanzierung &amp; Steuerberatung
-            </li>
-          </ul>
-          <div className="offer-price">
-            <span className="now">
-              <span className="ph">[Preis / Angebot]</span>
-            </span>
-            <span className="ctx">noch festzulegen — Jahres- oder Einmalzahlung für Investoren</span>
-          </div>
-          <a href="#" className="btn btn-primary btn-lg btn-block btn-arrow">
-            Strategiegespräch sichern <ArrowRight size={20} />
+          <div className="ttl">Investiere ab jetzt wie ein Profi.</div>
+          <a
+            href="https://my.allround.immo"
+            className="btn btn-primary btn-lg btn-block btn-arrow"
+            style={{ marginTop: 4 }}
+          >
+            Hol dir jetzt ALLROUND.IMMO <ArrowRight size={20} />
           </a>
           <p
             style={{
@@ -192,7 +166,7 @@ export function WebinarRoom() {
               marginTop: 14,
             }}
           >
-            Begrenzte Plätze · unverbindliches Erstgespräch
+            Direkt zur Plattform · my.allround.immo
           </p>
         </Reveal>
       </div>
