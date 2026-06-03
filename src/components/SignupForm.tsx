@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { ROUTES, STORAGE } from "@/lib/constants";
+import { notifyRegistration } from "@/lib/notify";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -32,6 +33,8 @@ export function SignupForm() {
     } catch {
       /* ignore storage errors */
     }
+    // notify the team about the new registration (best-effort, non-blocking)
+    void notifyRegistration(name, mail);
     // brief "securing your seat" beat, then advance to confirmation
     setTimeout(() => router.push(ROUTES.confirm), 650);
   }
