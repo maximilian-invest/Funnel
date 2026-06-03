@@ -9,6 +9,7 @@ import { SuccessRing } from "@/components/SuccessRing";
 import { GreetName } from "@/components/GreetName";
 import { CalendarButtons } from "@/components/CalendarButtons";
 import { ShareRow } from "@/components/ShareRow";
+import { PixelConversion } from "@/components/PixelConversion";
 import { ROUTES, WEBINAR } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -46,6 +47,7 @@ export default function ConfirmationPage() {
   return (
     <>
       <Nav variant="solid" />
+      <PixelConversion event="Lead" />
 
       {/* ===== CONFIRMATION ===== */}
       <section className="confirm">
