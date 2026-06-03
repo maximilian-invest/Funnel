@@ -664,3 +664,7 @@ svg.lucide { stroke-width: 1.75; }
 /* footer reduced to logo only */
 .footer { padding: 52px 0; }
 .footer-min { display: flex; align-items: center; justify-content: center; }
+
+/* webinar-room: website link in the nav */
+.nav-site { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.82); white-space: nowrap; transition: color .15s ease; }
+.nav-site:hover { color: #fff; }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowRight, Maximize, Play, Send, Users, Volume2 } from "lucide-react";
+import { ArrowRight, Maximize, Play, Send, Volume2 } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { ImageSlot } from "./ImageSlot";
 import { WEBINAR } from "@/lib/constants";
@@ -97,9 +97,6 @@ export function WebinarRoom() {
             <span className="live-pill">
               <span className="badge-dot live" /> LIVE
             </span>
-            <span className="viewers">
-              <Users size={14} /> 342 sehen zu
-            </span>
             <ImageSlot label="Webinar-Standbild / Folie ablegen" />
             {!overlayHidden && (
               <div
@@ -180,7 +177,7 @@ export function WebinarRoom() {
               className="badge-dot live"
               style={{ background: "#34d399", display: "inline-block" }}
             />{" "}
-            342 online
+            Live
           </span>
         </div>
         <div className="chat-msgs" ref={msgsRef}>

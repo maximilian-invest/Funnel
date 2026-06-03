@@ -36,15 +36,29 @@ export function Nav({ variant = "landing" }: { variant?: Variant }) {
         }}
       >
         <div className="container nav-inner">
-          <Link className="brand" href={ROUTES.landing} aria-label="Allround.immo">
+          <a
+            className="brand"
+            href="https://www.allround.immo"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="allround.immo"
+          >
             <span className="logo-light" style={{ opacity: 1, position: "static" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="mark" src={MARK_WHITE} alt="Allround.immo" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="word" src={WORD_WHITE} alt="" />
             </span>
-          </Link>
+          </a>
           <div className="nav-right">
+            <a
+              className="nav-site"
+              href="https://www.allround.immo"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              allround.immo
+            </a>
             <span className="badge badge-dark">
               <span className="badge-dot live" style={{ background: "#ef4444" }} /> Live in Kürze
             </span>
