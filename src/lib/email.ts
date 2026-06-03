@@ -123,3 +123,15 @@ export async function sendRegistrationEmails(
     t.sendMail({ from, to: teamTo, replyTo: email, subject: team.subject, html: team.html, text: team.text }),
   ]);
 }
+
+/** Connection + auth check (no mail sent) — for diagnostics only. */
+export async function verifySmtp(): Promise<{ ok: boolean; error?: string }> {
+  const t = getTransport();
+  if (!t) return { ok: false, error: "SMTP not configured" };
+  try {
+    await t.verify();
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}

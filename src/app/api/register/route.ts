@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendRegistrationEmails } from "@/lib/email";
+import { sendRegistrationEmails, verifySmtp } from "@/lib/email";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // Diagnostics: GET confirms this server build is live and whether the SMTP env
 // vars are present (booleans only — no secrets exposed).
-export async function GET() {
-  return NextResponse.json({
+export async function GET(req: NextRequest) {
+  const base = {
     ok: true,
     endpoint: "register",
     smtpConfigured: Boolean(
@@ -18,7 +18,12 @@ export async function GET() {
     secure: process.env.SMTP_SECURE ?? null,
     user: process.env.SMTP_USER ?? null,
     mailTo: process.env.MAIL_TO ?? null,
-  });
+  };
+  // ?selftest=1 → check SMTP connection + login (no mail sent) and report the error
+  if (req.nextUrl.searchParams.get("selftest")) {
+    return NextResponse.json({ ...base, verify: await verifySmtp() });
+  }
+  return NextResponse.json(base);
 }
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
