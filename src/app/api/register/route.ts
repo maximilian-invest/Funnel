@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "rate" }, { status: 429 });
     }
 
-    const siteUrl = process.env.MAIL_SITE_URL || req.nextUrl.origin;
+    const siteUrl = process.env.MAIL_SITE_URL || "https://live.allround.immo";
     await sendRegistrationEmails(name, email, siteUrl);
     return NextResponse.json({ ok: true });
   } catch (err) {
