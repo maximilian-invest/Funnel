@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendRegistrationEmails, verifySmtp } from "@/lib/email";
+import { sendRegistrationEmails, verifySmtp, verifyResend } from "@/lib/email";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,21 +7,22 @@ export const dynamic = "force-dynamic";
 // Diagnostics: GET confirms this server build is live and whether the SMTP env
 // vars are present (booleans only — no secrets exposed).
 export async function GET(req: NextRequest) {
+  const provider = process.env.RESEND_API_KEY ? "resend" : process.env.SMTP_HOST ? "smtp" : "none";
   const base = {
     ok: true,
     endpoint: "register",
+    provider,
+    resendConfigured: Boolean(process.env.RESEND_API_KEY),
     smtpConfigured: Boolean(
       process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS,
     ),
-    host: process.env.SMTP_HOST ?? null,
-    port: process.env.SMTP_PORT ?? null,
-    secure: process.env.SMTP_SECURE ?? null,
-    user: process.env.SMTP_USER ?? null,
+    mailFrom: process.env.MAIL_FROM ?? null,
     mailTo: process.env.MAIL_TO ?? null,
   };
-  // ?selftest=1 → check SMTP connection + login (no mail sent) and report the error
+  // ?selftest=1 → check the active provider (no mail sent) and report any error
   if (req.nextUrl.searchParams.get("selftest")) {
-    return NextResponse.json({ ...base, verify: await verifySmtp() });
+    const verify = process.env.RESEND_API_KEY ? await verifyResend() : await verifySmtp();
+    return NextResponse.json({ ...base, verify });
   }
   return NextResponse.json(base);
 }

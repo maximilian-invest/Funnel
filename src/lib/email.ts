@@ -112,20 +112,60 @@ export function teamEmail(name: string, email: string) {
   return { subject: `Neue Webinar-Anmeldung: ${name}`, html, text };
 }
 
+async function sendViaResend(p: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  replyTo?: string;
+}) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: p.from,
+      to: [p.to],
+      subject: p.subject,
+      html: p.html,
+      text: p.text,
+      ...(p.replyTo ? { reply_to: p.replyTo } : {}),
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`Resend ${res.status}: ${(await res.text().catch(() => "")).slice(0, 300)}`);
+  }
+}
+
 export async function sendRegistrationEmails(
   name: string,
   email: string,
   siteUrl: string,
 ): Promise<void> {
-  const t = getTransport();
-  if (!t) {
-    console.warn("[email] SMTP not configured — skipping send (set SMTP_* env vars).");
-    return;
-  }
-  const from = process.env.MAIL_FROM || `ALLROUND.IMMO <${process.env.SMTP_USER}>`;
-  const teamTo = process.env.MAIL_TO || process.env.SMTP_USER!;
+  const from =
+    process.env.MAIL_FROM || `ALLROUND.IMMO <${process.env.SMTP_USER || "onboarding@resend.dev"}>`;
+  const teamTo = process.env.MAIL_TO || process.env.SMTP_USER || email;
   const cust = customerEmail(name, siteUrl);
   const team = teamEmail(name, email);
+
+  // Preferred: Resend over HTTPS (works on Railway, where SMTP egress is blocked).
+  if (process.env.RESEND_API_KEY) {
+    await Promise.all([
+      sendViaResend({ from, to: email, subject: cust.subject, html: cust.html, text: cust.text }),
+      sendViaResend({ from, to: teamTo, replyTo: email, subject: team.subject, html: team.html, text: team.text }),
+    ]);
+    return;
+  }
+
+  // Fallback: SMTP.
+  const t = getTransport();
+  if (!t) {
+    console.warn("[email] No provider configured (set RESEND_API_KEY or SMTP_* env vars).");
+    return;
+  }
   await Promise.all([
     t.sendMail({ from, to: email, subject: cust.subject, html: cust.html, text: cust.text }),
     t.sendMail({ from, to: teamTo, replyTo: email, subject: team.subject, html: team.html, text: team.text }),
@@ -139,6 +179,27 @@ export async function verifySmtp(): Promise<{ ok: boolean; error?: string }> {
   try {
     await t.verify();
     return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/** Checks the Resend API key and lists the domains + their verification status. */
+export async function verifyResend(): Promise<{ ok: boolean; domains?: string[]; error?: string }> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return { ok: false, error: "RESEND_API_KEY not set" };
+  try {
+    const res = await fetch("https://api.resend.com/domains", {
+      headers: { Authorization: `Bearer ${key}` },
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { ok: false, error: `Resend ${res.status}: ${JSON.stringify(body).slice(0, 200)}` };
+    }
+    const domains = (body?.data ?? []).map(
+      (d: { name: string; status: string }) => `${d.name} (${d.status})`,
+    );
+    return { ok: true, domains };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
