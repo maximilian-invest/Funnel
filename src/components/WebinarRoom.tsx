@@ -14,46 +14,7 @@ type Msg = {
   text: string;
 };
 
-const SEED: Msg[] = [
-  {
-    initials: "MH",
-    color: "#ef4444",
-    name: "Maximilian · Host",
-    host: true,
-    text: "Willkommen! Schreibt gern in den Chat, aus welcher Stadt ihr investiert. 👋",
-  },
-  {
-    initials: "TK",
-    color: "#8b5cf6",
-    name: "Thomas K.",
-    text: "Wien — halte 6 Einheiten, freue mich auf die Stress-Test-Demo.",
-  },
-  {
-    initials: "SB",
-    color: "#34d399",
-    name: "Sandra B.",
-    text: "Endlich mal jemand, der DSCR verständlich erklärt 🙌",
-  },
-  {
-    initials: "JF",
-    color: "#ec4899",
-    name: "Jakob F.",
-    text: "Kann ich auch Inserate von willhaben importieren?",
-  },
-  {
-    initials: "MH",
-    color: "#ef4444",
-    name: "Maximilian · Host",
-    host: true,
-    text: "@Jakob: Ja — Link von jeder Plattform reicht. Zeige ich gleich live.",
-  },
-  {
-    initials: "AL",
-    color: "#111",
-    name: "Anna L.",
-    text: "Der Score auf der Landingpage war beeindruckend.",
-  },
-];
+const SEED: Msg[] = [];
 
 const REACTIONS = ["👍", "🔥", "👏", "❤️"];
 
@@ -135,7 +96,8 @@ export function WebinarRoom() {
         <Reveal as="div" className="room-title" delay={0.08}>
           <h1>{WEBINAR.title}</h1>
           <div className="room-host">
-            <ImageSlot avatar compact label="Foto" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="host-img" src="/assets/presenter.jpg" alt="Maximilian Hölzl" />
             <div className="rh-txt">
               <div className="a">{WEBINAR.host}</div>
               <div className="b">{WEBINAR.hostRole}</div>
@@ -181,17 +143,21 @@ export function WebinarRoom() {
           </span>
         </div>
         <div className="chat-msgs" ref={msgsRef}>
-          {messages.map((m, i) => (
-            <div className="cmsg" key={i}>
-              <span className="av" style={{ background: m.color }}>
-                {m.initials}
-              </span>
-              <div className="cm-body">
-                <div className={"nm" + (m.host ? " host" : "")}>{m.name}</div>
-                <div className="tx">{m.text}</div>
+          {messages.length === 0 ? (
+            <div className="chat-empty">Der Live-Chat startet mit dem Webinar.</div>
+          ) : (
+            messages.map((m, i) => (
+              <div className="cmsg" key={i}>
+                <span className="av" style={{ background: m.color }}>
+                  {m.initials}
+                </span>
+                <div className="cm-body">
+                  <div className={"nm" + (m.host ? " host" : "")}>{m.name}</div>
+                  <div className="tx">{m.text}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         <div className="reactions">
           {REACTIONS.map((r) => (

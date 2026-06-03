@@ -668,3 +668,9 @@ svg.lucide { stroke-width: 1.75; }
 /* webinar-room: website link in the nav */
 .nav-site { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.82); white-space: nowrap; transition: color .15s ease; }
 .nav-site:hover { color: #fff; }
+
+/* uploaded presenter / host photo */
+.presenter-photo .presenter-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: 50% 16%; border-radius: var(--radius-xl); border: 1px solid var(--color-hairline); display: block; }
+.room-host .host-img { width: 46px; height: 46px; border-radius: var(--radius-full); object-fit: cover; object-position: 42% 18%; flex: none; }
+/* empty live-chat state */
+.chat-empty { margin: auto; text-align: center; font-size: 13px; line-height: 1.5; color: var(--color-on-dark-soft); padding: 0 18px; }

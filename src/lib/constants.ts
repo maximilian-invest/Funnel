@@ -2,10 +2,10 @@
 // The webinar date is a placeholder from the design ([PLATZHALTER-TERMIN]).
 
 export const WEBINAR = {
-  /** Mo, 15. Juni 2026, 19:30 — local time. */
-  date: new Date(2026, 5, 15, 19, 30, 0),
-  shortLabel: "Mo, 15. Juni · 19:30",
-  longLabel: "Mo, 15. Juni 2026 · 19:30 Uhr · Live online",
+  /** Mo, 22. Juni 2026, 19:30 — local time. */
+  date: new Date(2026, 5, 22, 19, 30, 0),
+  shortLabel: "Mo, 22. Juni · 19:30",
+  longLabel: "Mo, 22. Juni 2026 · 19:30 Uhr · Live online",
   durationLabel: "~60 Min",
   title:
     "Vom Inserat zur Entscheidung: Cashflow, Rendite & Risiko jedes Objekts auf einen Blick.",

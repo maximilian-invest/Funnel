@@ -7,7 +7,6 @@ import { ScoreCard } from "@/components/ScoreCard";
 import { Countdown } from "@/components/Countdown";
 import { SignupForm } from "@/components/SignupForm";
 import { Faq } from "@/components/Faq";
-import { ImageSlot } from "@/components/ImageSlot";
 import { SeatsLeft } from "@/components/SeatsLeft";
 import { WEBINAR } from "@/lib/constants";
 import { asset } from "@/lib/asset";
@@ -38,7 +37,7 @@ export default function LandingPage() {
 
               <Reveal as="div" className="hero-date" delay={0.16}>
                 <span className="dt">
-                  <CalendarClock size={16} /> Mo, 15. Juni · 19:30 Uhr
+                  <CalendarClock size={16} /> Mo, 22. Juni · 19:30 Uhr
                 </span>
                 <Countdown variant="mini" />
               </Reveal>
@@ -207,7 +206,8 @@ export default function LandingPage() {
         <div className="container">
           <div className="presenter-grid">
             <Reveal as="div" className="presenter-photo" delay={0.08}>
-              <ImageSlot label="Foto Maximilian Hölzl hier ablegen" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="presenter-img" src="/assets/presenter.jpg" alt="Maximilian Hölzl" />
               <div className="presenter-badge">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img className="ai" src={MARK_WHITE} alt="" />
@@ -234,7 +234,7 @@ export default function LandingPage() {
               </p>
               <div className="cred-row">
                 <div className="cred">
-                  <div className="cv">15. Juni</div>
+                  <div className="cv">22. Juni</div>
                   <div className="ck">Live &amp; interaktiv · 19:30 Uhr</div>
                 </div>
                 <div className="cred">
