@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Play, Volume2 } from "lucide-react";
 import { Countdown } from "./Countdown";
+import { Viewers } from "./Viewers";
 import { WEBINAR } from "@/lib/constants";
 
 const START = WEBINAR.date.getTime();
@@ -80,6 +81,8 @@ export function WebinarPlayer() {
             <code>WEBINAR.video.url</code> in <code>src/lib/constants.ts</code>.
           </div>
         )}
+
+        {phase === "playing" && SRC && <Viewers />}
 
         {phase === "pre" && (
           <div className="player-overlay waiting">

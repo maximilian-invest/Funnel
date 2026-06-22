@@ -30,9 +30,15 @@ export const WEBINAR = {
     url:
       process.env.NEXT_PUBLIC_WEBINAR_VIDEO_URL ??
       "https://api.allround.immo/storage/v1/object/public/webinar/0622.mov",
-    /** Length of the recording in seconds (≈40 min) — drives the end screen. */
+    /** Length of the recording in seconds (≈40 min). */
     durationSec: 40 * 60,
   },
+  /**
+   * Fake "viewers" badge. Set `peak` a bit BELOW your expected turnout so it stays
+   * believable. The count ramps up at the start, holds near the peak, and drifts
+   * down toward the end — easing ±1 so it never visibly jumps.
+   */
+  viewers: { peak: 120, startLevel: 0.5, endLevel: 0.78 },
 } as const;
 
 export const ROUTES = {
