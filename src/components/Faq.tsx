@@ -14,8 +14,8 @@ const ITEMS: { q: string; a: string }[] = [
     a: "Nein. Wir erklären jede Kennzahl verständlich. Sinnvoll ist es, wenn du grundsätzlich über Immobilien-Investments nachdenkst oder bereits investierst — dann ziehst du den größten Nutzen.",
   },
   {
-    q: "Wird das Webinar aufgezeichnet?",
-    a: "Der größte Mehrwert entsteht in der Teilnahme — inklusive Q&A und der interaktiven Demo. Angemeldete Teilnehmer erhalten Hinweise zur Aufzeichnung per E-Mail.",
+    q: "Wie nehme ich teil?",
+    a: "Du brauchst nur einen Browser. Den Link zum Webinar-Raum bekommst du nach der Anmeldung per E-Mail — einfach pünktlich zum Termin öffnen.",
   },
   {
     q: "Für wen lohnt es sich am meisten?",
@@ -23,7 +23,7 @@ const ITEMS: { q: string; a: string }[] = [
   },
   {
     q: "Wie läuft das Webinar ab?",
-    a: "Rund 60 Minuten: zuerst die Kennzahlen und der Investment-Score, dann eine Demo an einem realen Objekt — vom Link-Import bis zum bankfähigen Dossier — und zum Abschluss Zeit für deine Fragen.",
+    a: "Rund 60 Minuten: zuerst die Kennzahlen und der Investment-Score, dann eine Demo an einem realen Objekt — vom Link-Import bis zum bankfähigen Dossier.",
   },
 ];
 

@@ -235,11 +235,11 @@ export default function LandingPage() {
               <div className="cred-row">
                 <div className="cred">
                   <div className="cv">22. Juni</div>
-                  <div className="ck">Interaktiv · 19:30 Uhr</div>
+                  <div className="ck">Beginn 19:30 Uhr</div>
                 </div>
                 <div className="cred">
                   <div className="cv">~60 Min</div>
-                  <div className="ck">inkl. Demo &amp; Q&amp;A</div>
+                  <div className="ck">inkl. Demo</div>
                 </div>
               </div>
             </Reveal>

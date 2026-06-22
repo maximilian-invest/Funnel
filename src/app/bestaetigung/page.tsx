@@ -37,8 +37,8 @@ const AGENDA: { time: string; title: string; body: string; delay: number }[] = [
   },
   {
     time: "00:50",
-    title: "Deine Fragen — Q&A",
-    body: "Bring dein Objekt oder deine Frage mit. Maximilian beantwortet sie direkt im Webinar.",
+    title: "Dein nächster Schritt mit ALLROUND.IMMO",
+    body: "Wie du das Gezeigte sofort auf deine eigenen Objekte anwendest.",
     delay: 0.16,
   },
 ];
