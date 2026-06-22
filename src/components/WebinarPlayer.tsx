@@ -49,24 +49,30 @@ export function WebinarPlayer() {
     return () => clearInterval(id);
   }, []);
 
-  // drive the <video> while live: seek to the live offset, keep it synced, autoplay muted
+  // drive the <video> while live: jump to the live offset ONCE, then let it play
+  // through smoothly. We deliberately do NOT keep re-seeking to the exact
+  // wall-clock position — on a slow connection that constantly re-buffers and
+  // causes severe stutter. We only realign after a big gap (e.g. the tab was
+  // backgrounded), tolerating normal drift so the buffer can fill.
   useEffect(() => {
     if (phase !== "live" || !SRC) return;
     const v = videoRef.current;
     if (!v) return;
     let cancelled = false;
 
-    const sync = () => {
+    const liveTarget = () => {
       const dur = v.duration && isFinite(v.duration) ? v.duration : DURATION;
-      const target = Math.min(Math.max((Date.now() - START) / 1000, 0), dur - 0.3);
-      // only correct meaningful drift (buffering / throttled background tab)
-      if (Math.abs(v.currentTime - target) > 1.5) v.currentTime = target;
+      return Math.min(Math.max((Date.now() - START) / 1000, 0), dur - 0.3);
+    };
+    const align = (force = false) => {
+      const target = liveTarget();
+      if (force || Math.abs(v.currentTime - target) > 30) v.currentTime = target;
     };
     const begin = () => {
       if (cancelled) return;
       v.muted = true; // muted is required for autoplay without a user gesture
       setMuted(true);
-      sync();
+      align(true); // jump to the live position a single time
       v.play().then(
         () => !cancelled && setNeedsTap(false),
         () => !cancelled && setNeedsTap(true),
@@ -76,14 +82,11 @@ export function WebinarPlayer() {
     if (v.readyState >= 1) begin();
     else v.addEventListener("loadedmetadata", begin, { once: true });
 
-    const drift = setInterval(() => {
-      if (cancelled) return;
-      sync();
-      if (v.paused) v.play().catch(() => {});
-    }, 4000);
+    // Realign only when returning to a backgrounded tab, never during steady
+    // playback — that keeps a slow stream from thrashing the buffer.
     const onVis = () => {
       if (!document.hidden && !cancelled) {
-        sync();
+        align();
         if (v.paused) v.play().catch(() => {});
       }
     };
@@ -93,7 +96,6 @@ export function WebinarPlayer() {
 
     return () => {
       cancelled = true;
-      clearInterval(drift);
       document.removeEventListener("visibilitychange", onVis);
       v.removeEventListener("ended", onEnded);
       v.removeEventListener("loadedmetadata", begin);
