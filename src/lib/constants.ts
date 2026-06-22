@@ -3,11 +3,11 @@
 
 export const WEBINAR = {
   /**
-   * ⚠️ TEMP TEST TIME — heute 12:35 Europe/Vienna, nur zum Autoplay-Testen.
-   * VOR dem Event zurücksetzen auf den echten Start:
-   *   new Date("2026-06-22T19:30:00+02:00")   // 19:30 Wien = 17:30 UTC, für alle gleich
+   * Live-Start: Mo, 22. Juni 2026, 19:30 Europe/Vienna (CEST = UTC+2).
+   * Absolute instant (≙ 17:30 UTC) — identical for every viewer, regardless of
+   * their local timezone.
    */
-  date: new Date("2026-06-22T14:25:00+02:00"),
+  date: new Date("2026-06-22T19:30:00+02:00"),
   shortLabel: "Mo, 22. Juni · 19:30",
   longLabel: "Mo, 22. Juni 2026 · 19:30 Uhr",
   durationLabel: "~60 Min",
