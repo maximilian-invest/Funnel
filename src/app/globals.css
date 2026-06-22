@@ -651,6 +651,35 @@ svg.lucide { stroke-width: 1.75; }
 }
 .seats-pill { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; color: #fff; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.32); padding: 8px 15px; border-radius: var(--radius-pill); }
 .seats-pill b { color: var(--color-accent); font-weight: 700; }
+
+/* ============================ WEBINAR PLAYER (synced "live" video) ============================ */
+.player-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
+.player-notice { padding: 28px; text-align: center; color: #fbbf24; font-size: 14px; line-height: 1.55; }
+.player-notice code { font-family: var(--font-mono); font-size: 12.5px; color: #fff; background: rgba(255,255,255,.1); padding: 1px 6px; border-radius: 5px; }
+
+/* waiting (pre-live) + ended panels reuse .player-overlay (absolute, centered, dim) */
+.player-overlay.waiting { background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.78)); gap: 6px; padding: 24px; }
+.player-overlay .ov-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: rgba(255,255,255,.72); }
+.player-overlay.waiting .bigcount { margin: 14px 0 6px; }
+
+/* click-to-enable-sound / tap-to-start overlay (rendered as a <button>) */
+.player-overlay.tap { -webkit-appearance: none; appearance: none; border: 0; width: 100%; height: 100%; font: inherit; color: inherit; cursor: pointer; background: rgba(0,0,0,.35); }
+.player-overlay.tap:hover .play-btn { transform: scale(1.06); background: #fff; }
+
+.player-overlay.ended { background: rgba(0,0,0,.82); gap: 12px; padding: 24px; text-align: center; }
+.player-overlay.ended .ended-ttl { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -.5px; color: #fff; }
+.player-overlay.ended .ov-txt { max-width: 380px; }
+
+.player-bar .ctrl button:disabled { opacity: .4; cursor: default; }
+
+/* fullscreen: let the video fill the screen instead of keeping the 16/9 box */
+.player:fullscreen { display: flex; flex-direction: column; justify-content: center; background: #000; }
+.player:fullscreen .player-stage { flex: 1; aspect-ratio: auto; }
+
+@media (max-width: 600px) {
+  .player-overlay.ended .ended-ttl { font-size: 22px; }
+  .player-overlay .ov-eyebrow { font-size: 11.5px; }
+}
 .seats-meter { width: 100%; max-width: 420px; margin: 22px auto 0; }
 .seats-meter-row { display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 13.5px; color: var(--color-on-dark-soft); margin-bottom: 11px; }
 .seats-meter-row .seats-lead b { color: var(--color-accent); font-weight: 700; }
