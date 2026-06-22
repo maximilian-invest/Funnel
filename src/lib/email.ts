@@ -205,6 +205,28 @@ export async function sendRegistrationEmails(
   ]);
 }
 
+/** Admin-only: emails the REAL concurrent live-viewer count. Never shown to viewers. */
+export async function sendViewerCountEmail(current: number, peak: number): Promise<void> {
+  const to = process.env.VIEWER_REPORT_TO || process.env.MAIL_TO || process.env.SMTP_USER;
+  if (!to) return;
+  const from =
+    process.env.MAIL_FROM || `ALLROUND.IMMO <${process.env.SMTP_USER || "onboarding@resend.dev"}>`;
+  const when = new Date().toLocaleString("de-AT", { timeZone: "Europe/Vienna" });
+  const subject = `🔴 Live-Zuseher: ${current} (Peak ${peak})`;
+  const text = `Aktuell sehen ${current} Personen live zu.\nHöchststand bisher: ${peak}.\nStand: ${when}`;
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;color:#111">
+    <p style="font-size:16px;margin:0 0 6px">Aktuell sehen <b style="font-size:22px">${current}</b> Personen live zu.</p>
+    <p style="margin:0 0 6px;color:#374151">Höchststand bisher: <b>${peak}</b></p>
+    <p style="margin:0;color:#9ca3af;font-size:12px">Stand: ${when}</p></div>`;
+  if (process.env.RESEND_API_KEY) {
+    await sendViaResend({ from, to, subject, html, text });
+    return;
+  }
+  const t = getTransport();
+  if (!t) return;
+  await t.sendMail({ from, to, subject, html, text });
+}
+
 /** Connection + auth check (no mail sent) — for diagnostics only. */
 export async function verifySmtp(): Promise<{ ok: boolean; error?: string }> {
   const t = getTransport();

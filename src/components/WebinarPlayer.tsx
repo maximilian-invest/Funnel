@@ -114,6 +114,32 @@ export function WebinarPlayer() {
     };
   }, [phase]);
 
+  // Heartbeat for the REAL live-viewer count → admin-only email. The client never
+  // receives the number; viewers only ever see the decorative badge.
+  useEffect(() => {
+    if (phase !== "playing" || !SRC) return;
+    let id = "";
+    try {
+      id = sessionStorage.getItem("ai_pid") || "";
+      if (!id) {
+        id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        sessionStorage.setItem("ai_pid", id);
+      }
+    } catch {
+      id = Math.random().toString(36).slice(2);
+    }
+    const ping = () =>
+      fetch("/api/presence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+        keepalive: true,
+      }).catch(() => {});
+    ping();
+    const iv = setInterval(ping, 20_000);
+    return () => clearInterval(iv);
+  }, [phase]);
+
   function seekToClientX(clientX: number) {
     const v = videoRef.current;
     const bar = barRef.current;
