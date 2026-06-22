@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Play, Volume2 } from "lucide-react";
+import { Maximize, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { Countdown } from "./Countdown";
 import { Viewers } from "./Viewers";
 import { WEBINAR } from "@/lib/constants";
@@ -15,17 +15,33 @@ function phaseFor(nowMs: number): Phase {
   return nowMs < START ? "pre" : "playing";
 }
 
+function clock(total: number): string {
+  const t = Math.max(0, Math.floor(total || 0));
+  const h = Math.floor(t / 3600);
+  const m = Math.floor((t % 3600) / 60);
+  const s = t % 60;
+  const pad = (n: number) => (n < 10 ? "0" + n : String(n));
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
 export function WebinarPlayer() {
+  const wrapRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  // `now` starts just before START so the first render (server + first client) is
-  // deterministically "pre" — no hydration drift; the tick corrects it on mount.
+  const barRef = useRef<HTMLDivElement>(null);
+
+  // `now` starts just before START so the first render is deterministically "pre".
   const [now, setNow] = useState<number>(START - 1);
   const [soundPrompt, setSoundPrompt] = useState(true);
   const [needsTap, setNeedsTap] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [cur, setCur] = useState(0); // viewer's playback position (s)
+  const [dur, setDur] = useState(0); // full recording length (s)
+  const [edge, setEdge] = useState(0); // live edge = elapsed since START (s)
 
   const phase: Phase = phaseFor(now);
 
-  // wall-clock tick until the room opens (no need to keep ticking afterwards)
+  // tick until the room opens
   useEffect(() => {
     if (phase === "playing") return;
     const tick = () => setNow(Date.now());
@@ -34,33 +50,29 @@ export function WebinarPlayer() {
     return () => clearInterval(id);
   }, [phase]);
 
-  // When the room opens, play "live": position = time elapsed since START. Late
-  // joiners jump to the live edge so they're in sync; on-time viewers just start
-  // at 0 and stay live as they watch. Viewers may REWIND freely, but cannot seek
-  // PAST the live edge (the future hasn't aired) — forward jumps snap back. We do
-  // NOT continuously re-seek during playback (that thrashes the buffer); we only
-  // cap forward seeks.
+  // live playback: start at the live edge, allow rewind, cap forward seeks at live,
+  // and keep the custom seek bar (position + live edge) updated.
   useEffect(() => {
     if (phase !== "playing" || !SRC) return;
     const v = videoRef.current;
     if (!v) return;
     let cancelled = false;
+    let loopId: ReturnType<typeof setTimeout>;
 
     const liveEdge = () => {
-      const dur = v.duration && isFinite(v.duration) ? v.duration : Infinity;
-      return Math.max(0, Math.min((Date.now() - START) / 1000, dur));
+      const d = v.duration && isFinite(v.duration) ? v.duration : Infinity;
+      return Math.max(0, Math.min((Date.now() - START) / 1000, d));
     };
-    // rewind = allowed; jumping ahead of "now" gets snapped back to the live edge
     const capForward = () => {
-      const edge = liveEdge();
-      if (v.currentTime > edge + 1.2) v.currentTime = Math.max(0, edge - 0.3);
+      const e = liveEdge();
+      if (v.currentTime > e + 1.2) v.currentTime = Math.max(0, e - 0.3);
     };
     const begin = () => {
       if (cancelled) return;
       v.muted = true; // required for autoplay without a user gesture
-      const edge = liveEdge();
-      // jump to live only for late joiners; on-time viewers start at 0
-      if (edge > 1.5 && v.currentTime < edge - 2) v.currentTime = edge - 0.3;
+      setMuted(true);
+      const e = liveEdge();
+      if (e > 1.5 && v.currentTime < e - 2) v.currentTime = e - 0.3; // late joiners → live
       v.play().then(
         () => !cancelled && setNeedsTap(false),
         () => !cancelled && setNeedsTap(true),
@@ -70,38 +82,118 @@ export function WebinarPlayer() {
     if (v.readyState >= 1) begin();
     else v.addEventListener("loadedmetadata", begin, { once: true });
 
+    const onMeta = () => setDur(v.duration || 0);
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    const onVol = () => setMuted(v.muted);
+    if (v.duration) setDur(v.duration);
+    v.addEventListener("loadedmetadata", onMeta);
+    v.addEventListener("play", onPlay);
+    v.addEventListener("pause", onPause);
+    v.addEventListener("volumechange", onVol);
     v.addEventListener("seeking", capForward);
-    v.addEventListener("timeupdate", capForward);
+
+    const loop = () => {
+      if (cancelled) return;
+      capForward();
+      setCur(v.currentTime);
+      setEdge(liveEdge());
+      loopId = setTimeout(loop, 250);
+    };
+    loop();
+
     return () => {
       cancelled = true;
-      v.removeEventListener("seeking", capForward);
-      v.removeEventListener("timeupdate", capForward);
+      clearTimeout(loopId);
       v.removeEventListener("loadedmetadata", begin);
+      v.removeEventListener("loadedmetadata", onMeta);
+      v.removeEventListener("play", onPlay);
+      v.removeEventListener("pause", onPause);
+      v.removeEventListener("volumechange", onVol);
+      v.removeEventListener("seeking", capForward);
     };
   }, [phase]);
 
+  function seekToClientX(clientX: number) {
+    const v = videoRef.current;
+    const bar = barRef.current;
+    if (!v || !bar) return;
+    const d = v.duration && isFinite(v.duration) ? v.duration : 0;
+    if (!d) return;
+    const r = bar.getBoundingClientRect();
+    const frac = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
+    const live = Math.max(0, Math.min((Date.now() - START) / 1000, d));
+    v.currentTime = Math.min(frac * d, live); // rewind freely, never past the live edge
+    setCur(v.currentTime);
+  }
+  function onBarPointerDown(e: React.PointerEvent) {
+    e.preventDefault();
+    seekToClientX(e.clientX);
+    const move = (ev: PointerEvent) => seekToClientX(ev.clientX);
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  }
+  function onBarKeyDown(e: React.KeyboardEvent) {
+    const v = videoRef.current;
+    if (!v) return;
+    if (e.key === "ArrowLeft") {
+      v.currentTime = Math.max(0, v.currentTime - 10);
+      setCur(v.currentTime);
+    } else if (e.key === "ArrowRight") {
+      const live = Math.max(0, Math.min((Date.now() - START) / 1000, v.duration || 0));
+      v.currentTime = Math.min(v.currentTime + 10, live);
+      setCur(v.currentTime);
+    }
+  }
+
+  function togglePlay() {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) v.play().catch(() => {});
+    else v.pause();
+  }
   function enableSound() {
     const v = videoRef.current;
     if (!v) return;
     v.muted = false;
     v.volume = 1;
+    setMuted(false);
     setSoundPrompt(false);
     setNeedsTap(false);
     v.play().catch(() => setNeedsTap(true));
   }
+  function toggleMute() {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    if (!v.muted) v.volume = 1;
+    setMuted(v.muted);
+  }
+  function toggleFullscreen() {
+    const el = wrapRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else el.requestFullscreen?.().catch(() => {});
+  }
+
+  const pctCur = dur ? Math.min(100, (cur / dur) * 100) : 0;
+  const pctEdge = dur ? Math.min(100, (edge / dur) * 100) : 0;
 
   return (
-    <div className="player">
+    <div className="player" ref={wrapRef}>
       <div className="player-stage">
         {SRC ? (
           <video
             ref={videoRef}
             className="player-video"
             src={SRC}
-            controls
             playsInline
             preload="auto"
-            controlsList="nodownload noplaybackrate"
+            onClick={togglePlay}
             aria-label={WEBINAR.title}
           >
             Ihr Browser unterstützt das Video-Element nicht.
@@ -145,6 +237,45 @@ export function WebinarPlayer() {
           </button>
         )}
       </div>
+
+      {phase === "playing" && SRC && (
+        <div className="player-bar">
+          <div className="ctrl">
+            <button type="button" aria-label={isPlaying ? "Pause" : "Abspielen"} onClick={togglePlay}>
+              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+            </button>
+          </div>
+          <div
+            className="seekbar"
+            ref={barRef}
+            onPointerDown={onBarPointerDown}
+            onKeyDown={onBarKeyDown}
+            role="slider"
+            tabIndex={0}
+            aria-label="Zeitleiste — Zurückspulen möglich, nicht über den Live-Punkt hinaus"
+            aria-valuemin={0}
+            aria-valuemax={Math.round(dur)}
+            aria-valuenow={Math.round(cur)}
+          >
+            <div className="rail" />
+            {/* background: how far the live video has progressed (its leading edge = live) */}
+            <div className="aired" style={{ width: `${pctEdge}%` }} />
+            {/* foreground: the viewer's own position */}
+            <div className="played" style={{ width: `${pctCur}%` }} />
+            <div className="live-dot" style={{ left: `${pctEdge}%` }} title="Live" />
+            <div className="thumb" style={{ left: `${pctCur}%` }} />
+          </div>
+          <span className="tt">{clock(cur)}</span>
+          <div className="ctrl">
+            <button type="button" aria-label={muted ? "Ton einschalten" : "Stummschalten"} onClick={toggleMute}>
+              {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
+            <button type="button" aria-label="Vollbild" onClick={toggleFullscreen}>
+              <Maximize size={20} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
