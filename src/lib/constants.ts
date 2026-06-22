@@ -29,7 +29,7 @@ export const WEBINAR = {
      */
     url:
       process.env.NEXT_PUBLIC_WEBINAR_VIDEO_URL ??
-      "https://api.allround.immo/storage/v1/object/public/webinar/0622.mov",
+      "https://api.allround.immo/storage/v1/object/public/webinar/0622.mp4",
     /** Length of the recording in seconds (≈40 min). */
     durationSec: 40 * 60,
   },
