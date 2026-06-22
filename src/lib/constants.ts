@@ -28,7 +28,9 @@ export const WEBINAR = {
      * committed fallback below is used, so the URL is guaranteed in the build.
      * Paste the final URL between the quotes once the recording is uploaded.
      */
-    url: process.env.NEXT_PUBLIC_WEBINAR_VIDEO_URL ?? "",
+    url:
+      process.env.NEXT_PUBLIC_WEBINAR_VIDEO_URL ??
+      "https://api.allround.immo/storage/v1/object/public/webinar/2026-06-22%2012-05-16.mov",
     /** Length of the recording in seconds (≈40 min) — drives the end screen. */
     durationSec: 40 * 60,
   },
