@@ -7,7 +7,7 @@ export const WEBINAR = {
    * VOR dem Event zurücksetzen auf den echten Start:
    *   new Date("2026-06-22T19:30:00+02:00")   // 19:30 Wien = 17:30 UTC, für alle gleich
    */
-  date: new Date("2026-06-22T13:50:00+02:00"),
+  date: new Date("2026-06-22T14:00:00+02:00"),
   shortLabel: "Mo, 22. Juni · 19:30",
   longLabel: "Mo, 22. Juni 2026 · 19:30 Uhr",
   durationLabel: "~60 Min",
