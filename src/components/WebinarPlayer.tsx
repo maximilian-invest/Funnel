@@ -160,15 +160,9 @@ export function WebinarPlayer() {
           </div>
         )}
 
-        {phase === "live" && (
-          <span className="live-pill">
-            <span className="badge-dot live" /> LIVE
-          </span>
-        )}
-
         {phase === "pre" && (
           <div className="player-overlay waiting">
-            <div className="ov-eyebrow">Das Live-Webinar startet in</div>
+            <div className="ov-eyebrow">Das Webinar startet in</div>
             <Countdown variant="big" />
             <div className="ov-txt">{WEBINAR.longLabel}</div>
           </div>
@@ -225,7 +219,7 @@ export function WebinarPlayer() {
         </div>
         <span className="tt">
           {phase === "live"
-            ? `LIVE · ${clock(offset)}`
+            ? clock(offset)
             : phase === "ended"
               ? "Beendet"
               : "Startet bald"}

@@ -277,7 +277,7 @@ export function ScoreCard() {
       ref={cardRef}
       className="score-card"
       data-demo-loop
-      aria-label="Allround Immo Score — Live-Analyse"
+      aria-label="Allround Immo Score — Analyse"
       initial={{ opacity: 0, y: 18 }}
       whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
       animate={reduce ? { opacity: 1, y: 0 } : undefined}
@@ -290,7 +290,7 @@ export function ScoreCard() {
           <img className="ai" src={MARK_WHITE} alt="" /> Allround Immo Score
         </span>
         <span className="badge badge-dark">
-          <span className="badge-dot live" style={{ background: "#34d399" }} /> Live-Analyse
+          <span className="badge-dot live" style={{ background: "#34d399" }} /> Analyse
         </span>
       </div>
       <div className="score-body">

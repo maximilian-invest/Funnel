@@ -24,7 +24,7 @@ export default function LandingPage() {
           <div className="hero-grid">
             <div>
               <Reveal as="p" className="eyebrow eyebrow-dark">
-                Kostenloses Live-Webinar · begrenzte Plätze
+                Kostenloses Webinar · begrenzte Plätze
               </Reveal>
               <Reveal as="h1" delay={0.08}>
                 Bewerte jeden Deal in Minuten — wie ein Profi.
@@ -32,7 +32,7 @@ export default function LandingPage() {
               <Reveal as="p" className="sub" delay={0.16}>
                 Für Investoren und Bestandshalter: Wie du mit dem KI-System von ALLROUND.IMMO
                 Cashflow, Rendite und Risiko jedes Objekts sofort sichtbar machst — und in einer
-                Live-Demo ein reales Inserat in Minuten durchrechnest.
+                Demo ein reales Inserat in Minuten durchrechnest.
               </Reveal>
 
               <Reveal as="div" className="hero-date" delay={0.16}>
@@ -76,7 +76,7 @@ export default function LandingPage() {
             <h2>In 60 Minuten von „Bauchgefühl“ zu klaren Zahlen.</h2>
             <p className="lede">
               Kein Theorie-Vortrag. Du lernst exakt den Prozess, mit dem Profis jeden Deal
-              bewerten — und siehst ihn live an einem echten Objekt.
+              bewerten — und siehst ihn an einem echten Objekt.
             </p>
           </Reveal>
           <div className="curric-grid">
@@ -121,13 +121,13 @@ export default function LandingPage() {
             <Reveal as="div" className="curric-card demo" delay={0.16}>
               <span className="num">04</span>
               <div>
-                <h3>Live-Demo: ein reales Inserat per Link importieren und komplett durchrechnen</h3>
+                <h3>Demo: ein reales Inserat per Link importieren und komplett durchrechnen</h3>
                 <p>
                   Von der Rendite bis zum bankfähigen Dossier — in Minuten statt Stunden. Du siehst
                   die Plattform in Aktion, nicht in Folien.
                 </p>
                 <span className="demo-tag">
-                  <Radio size={14} /> Live am echten Objekt
+                  <Radio size={14} /> Am echten Objekt
                 </span>
               </div>
             </Reveal>
@@ -235,11 +235,11 @@ export default function LandingPage() {
               <div className="cred-row">
                 <div className="cred">
                   <div className="cv">22. Juni</div>
-                  <div className="ck">Live &amp; interaktiv · 19:30 Uhr</div>
+                  <div className="ck">Interaktiv · 19:30 Uhr</div>
                 </div>
                 <div className="cred">
                   <div className="cv">~60 Min</div>
-                  <div className="ck">inkl. Live-Demo &amp; Q&amp;A</div>
+                  <div className="ck">inkl. Demo &amp; Q&amp;A</div>
                 </div>
               </div>
             </Reveal>

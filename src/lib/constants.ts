@@ -9,7 +9,7 @@ export const WEBINAR = {
    */
   date: new Date("2026-06-22T12:35:00+02:00"),
   shortLabel: "Mo, 22. Juni · 19:30",
-  longLabel: "Mo, 22. Juni 2026 · 19:30 Uhr · Live online",
+  longLabel: "Mo, 22. Juni 2026 · 19:30 Uhr",
   durationLabel: "~60 Min",
   title:
     "Vom Inserat zur Entscheidung: Cashflow, Rendite & Risiko jedes Objekts auf einen Blick.",

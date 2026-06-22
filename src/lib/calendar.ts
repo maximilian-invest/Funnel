@@ -1,9 +1,9 @@
 import { WEBINAR } from "./constants";
 
-const TITLE = "ALLROUND.IMMO · Live-Webinar";
+const TITLE = "ALLROUND.IMMO · Webinar";
 const DETAILS =
   "Vom Inserat zur Entscheidung: Cashflow, Rendite & Risiko jedes Objekts auf einen Blick. Die Zugangsdaten kommen per E-Mail.";
-const LOCATION = "Live online";
+const LOCATION = "Online";
 
 function pad(n: number) {
   return n < 10 ? "0" + n : "" + n;

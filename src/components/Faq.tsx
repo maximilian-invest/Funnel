@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 const ITEMS: { q: string; a: string }[] = [
   {
     q: "Ist die Teilnahme wirklich kostenlos?",
-    a: "Ja, das Live-Webinar ist vollständig kostenlos. Du brauchst nur einen Platz zu sichern und bekommst die Zugangsdaten per E-Mail.",
+    a: "Ja, das Webinar ist vollständig kostenlos. Du brauchst nur einen Platz zu sichern und bekommst die Zugangsdaten per E-Mail.",
   },
   {
     q: "Brauche ich Vorkenntnisse?",
@@ -15,7 +15,7 @@ const ITEMS: { q: string; a: string }[] = [
   },
   {
     q: "Wird das Webinar aufgezeichnet?",
-    a: "Der größte Mehrwert entsteht live — inklusive Q&A und der interaktiven Demo. Angemeldete Teilnehmer erhalten Hinweise zur Aufzeichnung per E-Mail.",
+    a: "Der größte Mehrwert entsteht in der Teilnahme — inklusive Q&A und der interaktiven Demo. Angemeldete Teilnehmer erhalten Hinweise zur Aufzeichnung per E-Mail.",
   },
   {
     q: "Für wen lohnt es sich am meisten?",
@@ -23,7 +23,7 @@ const ITEMS: { q: string; a: string }[] = [
   },
   {
     q: "Wie läuft das Webinar ab?",
-    a: "Rund 60 Minuten: zuerst die Kennzahlen und der Investment-Score, dann eine Live-Demo an einem realen Objekt — vom Link-Import bis zum bankfähigen Dossier — und zum Abschluss Zeit für deine Fragen.",
+    a: "Rund 60 Minuten: zuerst die Kennzahlen und der Investment-Score, dann eine Demo an einem realen Objekt — vom Link-Import bis zum bankfähigen Dossier — und zum Abschluss Zeit für deine Fragen.",
   },
 ];
 

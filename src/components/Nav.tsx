@@ -60,7 +60,7 @@ export function Nav({ variant = "landing" }: { variant?: Variant }) {
               allround.immo
             </a>
             <span className="badge badge-dark">
-              <span className="badge-dot live" style={{ background: "#ef4444" }} /> Live in Kürze
+              <span className="badge-dot live" style={{ background: "#ef4444" }} /> In Kürze
             </span>
           </div>
         </div>

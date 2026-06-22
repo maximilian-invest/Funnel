@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   title:
     "ALLROUND.IMMO · Webinar — Bewerte Immobilien-Deals wie ein institutioneller Investor",
   description:
-    "Kostenloses Live-Webinar: Wie du mit dem KI-System von ALLROUND.IMMO Cashflow, Rendite und Risiko jedes Objekts sofort sichtbar machst — und in einer Live-Demo ein reales Inserat in Minuten durchrechnest.",
+    "Kostenloses Webinar: Wie du mit dem KI-System von ALLROUND.IMMO Cashflow, Rendite und Risiko jedes Objekts sofort sichtbar machst — und in einer Demo ein reales Inserat in Minuten durchrechnest.",
 };
 
 export default function RootLayout({

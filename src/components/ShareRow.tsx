@@ -13,7 +13,7 @@ function LinkedInIcon() {
 }
 
 const SHARE_TEXT =
-  "Kostenloses Live-Webinar von ALLROUND.IMMO — Immobilien-Deals bewerten wie ein Profi:";
+  "Kostenloses Webinar von ALLROUND.IMMO — Immobilien-Deals bewerten wie ein Profi:";
 
 function currentUrl() {
   if (typeof window === "undefined") return "";

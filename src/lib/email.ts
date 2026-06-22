@@ -62,10 +62,10 @@ export function customerEmail(name: string, siteUrl: string) {
   <tr><td style="padding:24px 36px 0;">
     <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.6px;color:#ef4444;text-transform:uppercase;">Anmeldung bestätigt</div>
     <h1 style="margin:12px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:29px;line-height:1.2;color:#ffffff;font-weight:800;">Du bist dabei, ${safe}.</h1>
-    <p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#a1a1aa;">Dein Platz für das kostenlose Live-Webinar ist reserviert. Über den Button unten kommst du direkt in den Webinar-Raum — leg dir den Termin am besten gleich in den Kalender.</p>
+    <p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#a1a1aa;">Dein Platz für das kostenlose Webinar ist reserviert. Über den Button unten kommst du direkt in den Webinar-Raum — leg dir den Termin am besten gleich in den Kalender.</p>
   </td></tr>
   <tr><td style="padding:22px 36px 0;">
-    <div style="font-family:Arial,Helvetica,sans-serif;background:#1f1f1f;border:1px solid #2c2c2c;border-radius:10px;padding:13px 16px;font-size:14px;color:#ffffff;font-weight:700;">📅&nbsp; Mo, 22. Juni 2026 · 19:30 Uhr · Live online</div>
+    <div style="font-family:Arial,Helvetica,sans-serif;background:#1f1f1f;border:1px solid #2c2c2c;border-radius:10px;padding:13px 16px;font-size:14px;color:#ffffff;font-weight:700;">📅&nbsp; Mo, 22. Juni 2026 · 19:30 Uhr</div>
   </td></tr>
   <tr><td style="padding:16px 36px 0;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${box(d, "Tage")}${gap}${box(h, "Stunden")}${gap}${box(m, "Minuten")}</tr></table>
@@ -83,8 +83,8 @@ export function customerEmail(name: string, siteUrl: string) {
 
   const text = `Du bist dabei, ${name || "Investor"}.
 
-Dein Platz für das kostenlose Live-Webinar ist reserviert.
-Mo, 22. Juni 2026 · 19:30 Uhr · Live online
+Dein Platz für das kostenlose Webinar ist reserviert.
+Mo, 22. Juni 2026 · 19:30 Uhr
 
 Zum Webinar-Raum: ${link}
 

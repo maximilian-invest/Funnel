@@ -31,13 +31,13 @@ const AGENDA: { time: string; title: string; body: string; delay: number }[] = [
   },
   {
     time: "00:30",
-    title: "Live-Demo: vom Link-Import zum bankfähigen Dossier",
+    title: "Demo: vom Link-Import zum bankfähigen Dossier",
     body: "Ein reales Inserat importieren und in Minuten komplett durchrechnen — von der Rendite bis zum Stress-Test.",
     delay: 0.16,
   },
   {
     time: "00:50",
-    title: "Deine Fragen — Live-Q&A",
+    title: "Deine Fragen — Q&A",
     body: "Bring dein Objekt oder deine Frage mit. Maximilian beantwortet sie direkt im Webinar.",
     delay: 0.16,
   },
@@ -62,7 +62,7 @@ export default function ConfirmationPage() {
                 Du bist dabei, <GreetName />.
               </Reveal>
               <Reveal as="p" className="lede" delay={0.08}>
-                Dein Platz für das Live-Webinar ist reserviert. Die Zugangsdaten sind unterwegs in
+                Dein Platz für das Webinar ist reserviert. Die Zugangsdaten sind unterwegs in
                 dein Postfach — leg dir den Termin am besten gleich in den Kalender.
               </Reveal>
 
