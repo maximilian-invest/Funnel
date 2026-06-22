@@ -38,7 +38,7 @@ export const WEBINAR = {
    * believable. The count ramps up at the start, holds near the peak, and drifts
    * down toward the end — easing ±1 so it never visibly jumps.
    */
-  viewers: { peak: 120, startLevel: 0.5, endLevel: 0.78 },
+  viewers: { peak: 42, startLevel: 0.5, endLevel: 0.78 },
 } as const;
 
 export const ROUTES = {

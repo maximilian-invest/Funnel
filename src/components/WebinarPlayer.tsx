@@ -34,19 +34,50 @@ export function WebinarPlayer() {
     return () => clearInterval(id);
   }, [phase]);
 
-  // When the room opens, autoplay from the start (muted — browser autoplay policy).
-  // Viewers then fully control playback via the native controls: play/pause,
-  // rewind/seek, volume, fullscreen. We do NOT force a live position, so playback
-  // buffers smoothly and customers can scrub freely.
+  // When the room opens, play "live": position = time elapsed since START. Late
+  // joiners jump to the live edge so they're in sync; on-time viewers just start
+  // at 0 and stay live as they watch. Viewers may REWIND freely, but cannot seek
+  // PAST the live edge (the future hasn't aired) — forward jumps snap back. We do
+  // NOT continuously re-seek during playback (that thrashes the buffer); we only
+  // cap forward seeks.
   useEffect(() => {
     if (phase !== "playing" || !SRC) return;
     const v = videoRef.current;
     if (!v) return;
-    v.muted = true; // required for autoplay without a user gesture
-    v.play().then(
-      () => setNeedsTap(false),
-      () => setNeedsTap(true),
-    );
+    let cancelled = false;
+
+    const liveEdge = () => {
+      const dur = v.duration && isFinite(v.duration) ? v.duration : Infinity;
+      return Math.max(0, Math.min((Date.now() - START) / 1000, dur));
+    };
+    // rewind = allowed; jumping ahead of "now" gets snapped back to the live edge
+    const capForward = () => {
+      const edge = liveEdge();
+      if (v.currentTime > edge + 1.2) v.currentTime = Math.max(0, edge - 0.3);
+    };
+    const begin = () => {
+      if (cancelled) return;
+      v.muted = true; // required for autoplay without a user gesture
+      const edge = liveEdge();
+      // jump to live only for late joiners; on-time viewers start at 0
+      if (edge > 1.5 && v.currentTime < edge - 2) v.currentTime = edge - 0.3;
+      v.play().then(
+        () => !cancelled && setNeedsTap(false),
+        () => !cancelled && setNeedsTap(true),
+      );
+    };
+
+    if (v.readyState >= 1) begin();
+    else v.addEventListener("loadedmetadata", begin, { once: true });
+
+    v.addEventListener("seeking", capForward);
+    v.addEventListener("timeupdate", capForward);
+    return () => {
+      cancelled = true;
+      v.removeEventListener("seeking", capForward);
+      v.removeEventListener("timeupdate", capForward);
+      v.removeEventListener("loadedmetadata", begin);
+    };
   }, [phase]);
 
   function enableSound() {
@@ -70,7 +101,7 @@ export function WebinarPlayer() {
             controls
             playsInline
             preload="auto"
-            controlsList="nodownload"
+            controlsList="nodownload noplaybackrate"
             aria-label={WEBINAR.title}
           >
             Ihr Browser unterstützt das Video-Element nicht.
