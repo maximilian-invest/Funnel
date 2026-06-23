@@ -18,11 +18,14 @@ export function RecordingPlayer() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    try {
-      if (localStorage.getItem(KEY) === "1") setUnlocked(true);
-    } catch {
-      /* ignore */
-    }
+    const restore = () => {
+      try {
+        if (localStorage.getItem(KEY) === "1") setUnlocked(true);
+      } catch {
+        /* ignore */
+      }
+    };
+    restore();
   }, []);
 
   // returning (already-unlocked) visitors: best-effort start; autoplay may be
