@@ -227,6 +227,29 @@ export async function sendViewerCountEmail(current: number, peak: number): Promi
   await t.sendMail({ from, to, subject, html, text });
 }
 
+/** Admin-only: someone requested the recording — send us their e-mail address. */
+export async function sendRecordingRequestEmail(email: string): Promise<void> {
+  const to = process.env.VIEWER_REPORT_TO || process.env.MAIL_TO || process.env.SMTP_USER;
+  if (!to) return;
+  const from =
+    process.env.MAIL_FROM || `ALLROUND.IMMO <${process.env.SMTP_USER || "onboarding@resend.dev"}>`;
+  const when = new Date().toLocaleString("de-AT", { timeZone: "Europe/Vienna" });
+  const safe = esc(email);
+  const subject = `Aufzeichnung angefragt: ${email}`;
+  const text = `Neue Aufzeichnungs-Anfrage:\n${email}\nStand: ${when}`;
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;color:#111">
+    <p style="font-size:13px;font-weight:700;letter-spacing:1px;color:#ef4444;text-transform:uppercase;margin:0">Aufzeichnung angefragt</p>
+    <p style="font-size:18px;margin:8px 0 4px"><a href="mailto:${safe}" style="color:#111;text-decoration:none">${safe}</a></p>
+    <p style="margin:0;color:#9ca3af;font-size:12px">${when}</p></div>`;
+  if (process.env.RESEND_API_KEY) {
+    await sendViaResend({ from, to, replyTo: email, subject, html, text });
+    return;
+  }
+  const t = getTransport();
+  if (!t) return;
+  await t.sendMail({ from, to, replyTo: email, subject, html, text });
+}
+
 /** Connection + auth check (no mail sent) — for diagnostics only. */
 export async function verifySmtp(): Promise<{ ok: boolean; error?: string }> {
   const t = getTransport();

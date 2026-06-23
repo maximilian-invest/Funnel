@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Maximize, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { Countdown } from "./Countdown";
 import { Viewers } from "./Viewers";
+import { RecordingPlayer } from "./RecordingPlayer";
 import { WEBINAR } from "@/lib/constants";
 
 const START = WEBINAR.date.getTime();
@@ -25,6 +26,10 @@ function clock(total: number): string {
 }
 
 export function WebinarPlayer() {
+  return WEBINAR.recording ? <RecordingPlayer /> : <LivePlayer />;
+}
+
+function LivePlayer() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const barRef = useRef<HTMLDivElement>(null);

@@ -17,6 +17,11 @@ export const WEBINAR = {
   hostRole:
     "Konzessionierter Immobilientreuhänder & Marketing-Experte · ALLROUND.IMMO",
   /**
+   * Live event is over → /webinar shows the recording behind an e-mail gate.
+   * Set back to false to run another live webinar (with a new `date`).
+   */
+  recording: true,
+  /**
    * Pre-recorded "live" video. Plays wall-clock-synchronized to `date`: late
    * joiners start at the correct position, seeking is disabled, and after
    * `durationSec` the room switches to the end screen.
